@@ -1,0 +1,60 @@
+version: "3.8"
+
+services:
+  backend:
+    container_name: backend
+    build:
+      context: ./backend
+      # dockerfile: Dockerfile
+      target: runner
+    # env_file:
+    #   # Ensure that the variables in .env match the same variables in devcontainer.json
+    #   - .env
+    ports:
+      - 8080:8080
+    # command: sleep infinity
+    depends_on:
+      mysql:
+        condition: service_healthy
+  # frontend:
+  #   container_name: frontend
+  #   build:
+  #     context: ./frontend
+  #   ports:
+  #     - 3000:3000
+  #   volumes:
+  #     - type: bind
+  #       source: ./frontend
+  #       target: /workspaces
+  mysql:
+    image: mysql:8.0.36
+    container_name: mysql
+    restart: always
+    ports:
+      - "3306:3306"
+    volumes:
+      - type: volume
+        source: mysql-store
+        target: /var/lib/mysql
+        volume:
+          nocopy: true
+    environment:
+      MYSQL_DATABASE: app_db
+      MYSQL_USER: gogo
+      MYSQL_PASSWORD: gogo
+      MYSQL_ROOT_USER: root
+      MYSQL_ROOT_PASSWORD: root
+      TZ: Asia/Tokyo
+    command:
+      - --character-set-server=utf8mb4
+      - --lower_case_table_names=1
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+
+  # redis
+  # redis:
+  #   image: redis:6.0-alpine3.18
+  #   ports:
+  #     - 6379:6379
+volumes:
+  mysql-store:

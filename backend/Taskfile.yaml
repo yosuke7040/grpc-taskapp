@@ -1,0 +1,106 @@
+version: '3'
+
+vars:
+  MIGRATION_DIR: "file://data/schema"
+  PRIVATE_KEY_PATH: "path/to/private/key"  # 適切なパスに変更してください
+  KEY_DIR: "path/to/key/dir"  # 適切なパスに変更してください
+  DATABASE_URL: "your_database_url"  # 適切なURLに変更してください
+
+tasks:
+  all:
+    desc: "Run install and run"
+    cmds:
+      - task: install
+      - task: run
+
+  install:
+    desc: "Run all generate tasks"
+    cmds:
+      - task: gen_key
+      - task: gen_rpc
+      - task: gen_orm
+      - task: gen_mock
+
+  gen_key:
+    desc: "Generate private key"
+    cmds:
+      - echo "PRIVATE_KEY_PATH={{.PRIVATE_KEY_PATH}}"
+      - mkdir -p {{.KEY_DIR}}
+      - openssl genrsa -out {{.PRIVATE_KEY_PATH}} 2048
+      - chmod 700 {{.KEY_DIR}}
+      - chmod 600 {{.PRIVATE_KEY_PATH}}
+      - echo "done generate key!!"
+
+  fmt:
+    desc: "Format go code"
+    cmds:
+      - go fmt ./...
+
+  depend:
+    desc: "Run go mod tidy"
+    cmds:
+      - go mod tidy
+
+  run:
+    desc: "Run the application"
+    cmds:
+      - task: depend
+      - task: gen_key
+      - air -c .air.toml
+      - echo "done"
+
+  gen_rpc:
+    desc: "Generate RPC code"
+    cmds:
+      - buf lint
+      - buf format -w
+      - buf generate
+      - go mod tidy
+      - echo "done gen_rpc!!"
+
+  db_refresh:
+    desc: "Refresh the database"
+    cmds:
+      - migrate -database={{.DATABASE_URL}} -source={{.MIGRATION_DIR}} drop -f
+      - migrate -database={{.DATABASE_URL}} -source={{.MIGRATION_DIR}} up
+      - echo "done refresh database!!"
+
+  gen_orm:
+    desc: "Generate ORM code"
+    cmds:
+      - task: db_refresh
+      - sqlc generate
+      - go mod tidy
+      - echo "done gen_orm!!"
+
+  gen_mock:
+    desc: "Generate mock code"
+    cmds:
+      - mkdir -p ./test/mocks
+      - mockery
+      - go mod tidy
+      - echo "done generate mocks!!"
+
+  test:
+    desc: "Run unit tests"
+    cmds:
+      - task: depend
+      - go test ./domain/...
+      - go test ./app/...
+      - go test ./util/...
+      - echo "done unittest!!"
+
+  integration:
+    desc: "Run integration tests"
+    cmds:
+      - task: depend
+      - go test ./test/integration/...
+      - echo "done integration test"
+
+  all_test:
+    desc: "Run all tests"
+    cmds:
+      - task: install
+      - task: test
+      - task: integration
+      - echo "done all tests!!"

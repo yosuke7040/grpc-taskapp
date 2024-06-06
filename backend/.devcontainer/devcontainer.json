@@ -1,0 +1,27 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/go-postgres
+{
+  "name": "grpc-taskapp",
+  // 配列に書いた順で起動して、composeを上書きする
+  "dockerComposeFile": ["../../compose.yaml", "compose.extend.yaml"],
+  "service": "backend",
+  // // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+  // "image": "mcr.microsoft.com/devcontainers/go:1-1.22-bookworm",
+  "workspaceFolder": "/workspace",
+  // "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "go.toolsManagement.checkForUpdates": "local",
+        "go.useLanguageServer": true,
+        "go.gopath": "/go"
+      },
+
+      "extensions": ["golang.Go", "dbaeumer.vscode-eslint"]
+    }
+  },
+  "shutdownAction": "stopCompose",
+  // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+  "remoteUser": "root"
+  // "remoteUser": "vscode"
+}
