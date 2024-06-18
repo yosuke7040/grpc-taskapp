@@ -1,0 +1,48 @@
+// {
+//   "version": "0.2.0",
+//   "configurations": [
+//       {
+//           "name": "Launch Server",
+//           "type": "go",
+//           "request": "launch",
+//           "mode": "debug",
+//           "program": "${workspaceFolder}/server.go"
+//       }
+//   ]
+// }
+
+{
+  "version": "0.2.0",
+  "configurations": [
+      {
+          "name": "Debug with Delve",
+          "type": "go",
+          "request": "launch",
+          "mode": "remote",
+          "remotePath": "/workspace",
+          "program": "/workspace/main",
+          "port": 2345,
+          "host": "127.0.0.1",
+          "apiVersion": 2,
+          "showLog": true,
+          "trace": "verbose",
+          "dlvToolPath": "/go/bin/dlv"
+      }
+  ]
+}
+
+// {
+//   "version": "0.2.0",
+//   "configurations": [
+//       {
+//           "name": "Attach to Server",
+//           "type": "go",
+//           "request": "attach",
+//           "mode": "remote",
+//           "remotePath": "/workspace",
+//           "port": 2345,
+//           "host": "localhost",
+//           "showLog": true
+//       }
+//   ]
+// }
