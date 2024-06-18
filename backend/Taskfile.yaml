@@ -1,10 +1,10 @@
 version: '3'
 
 vars:
-  MIGRATION_DIR: "file://data/schema"
-  PRIVATE_KEY_PATH: "path/to/private/key"  # 適切なパスに変更してください
-  KEY_DIR: "path/to/key/dir"  # 適切なパスに変更してください
-  DATABASE_URL: "your_database_url"  # 適切なURLに変更してください
+  MIGRATION_DIR: "./data/schema"
+  # PRIVATE_KEY_PATH: "path/to/private/key"
+  # KEY_DIR: "path/to/key/dir"
+  DATABASE_URL: "mysql://gogo:gogo@tcp(mysql:3306)/app_db?parseTime=true"
 
 tasks:
   all:
@@ -61,8 +61,8 @@ tasks:
   db_refresh:
     desc: "Refresh the database"
     cmds:
-      - migrate -database={{.DATABASE_URL}} -source={{.MIGRATION_DIR}} drop -f
-      - migrate -database={{.DATABASE_URL}} -source={{.MIGRATION_DIR}} up
+      - migrate -database="{{.DATABASE_URL}}" -source="file://{{.MIGRATION_DIR}}" drop -f
+      - migrate -database="{{.DATABASE_URL}}" -source="file://{{.MIGRATION_DIR}}" up
       - echo "done refresh database!!"
 
   gen_orm:

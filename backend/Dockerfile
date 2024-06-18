@@ -12,6 +12,7 @@ COPY . .
 
 RUN CGO_ENABLED=0 go build
 
+# ------------------------------------
 FROM golang:1.22-alpine3.19 AS runner
 
 WORKDIR /workspace
@@ -23,7 +24,10 @@ EXPOSE 8080
 CMD ["sleep", "infinity"]
 # CMD ["/workspace"]
 
-FROM golang:1.22-bookworm AS develop
+
+# ------------------------------------
+# FROM golang:1.22-bookworm AS develop
+FROM mcr.microsoft.com/devcontainers/go:1-1.22-bookworm AS develop
 
 WORKDIR /workspace
 # COPY --from=builder /workspace ./
@@ -34,20 +38,20 @@ RUN curl -L https://github.com/vektra/mockery/releases/download/v2.42.1/mockery_
 # データベースのマイグレーションのためにgolang-migrate/migrateをインストール
 RUN curl -L https://github.com/golang-migrate/migrate/releases/download/v4.17.0/migrate.linux-amd64.tar.gz | tar xvz && mv ./migrate /usr/bin/migrate
 
-# サーバーのライブリロードのためにcosmtrek/airをインストール
-# RUN go install github.com/cosmtrek/air@latest
-RUN go install github.com/air-verse/air@v1.52.2
-
-# データベースアクセスのためにkyleconroy/sqlcをインストール
-RUN go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
-
-# gRPCとREST APIのコード生成のためにconnect-goとbufをインストール
-RUN go install github.com/bufbuild/buf/cmd/buf@latest \
+RUN go install github.com/air-verse/air@v1.52.2 \
+  && go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest \
+  && go install github.com/bufbuild/buf/cmd/buf@latest \
   && go install google.golang.org/protobuf/cmd/protoc-gen-go@latest \
   && go install connectrpc.com/connect/cmd/protoc-gen-connect-go@latest
 
+# bufのlinterとtask
+RUN go install github.com/yoheimuta/protolint/cmd/protolint@latest \
+  && go install github.com/go-task/task/v3/cmd/task@latest \
+  && go install github.com/go-delve/delve/cmd/dlv@latest
+
+
 # # モジュールへ実行権限を与える(vscodeユーザーでもアクセス可能にする)
-# RUN sudo chmod -R a+rwX /go/pkg
+RUN sudo chmod -R a+rwX /go/pkg
 
 # CMD ["air"]
 CMD ["sleep", "infinity"]
