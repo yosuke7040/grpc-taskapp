@@ -1,0 +1,5 @@
+syntax = "proto3";
+
+package rpc.auth.v1;
+
+option go_package = "github.com/yosuke7040/grpc-taskapp/backend/interfaces/rpc/auth/v1;auth_v1";

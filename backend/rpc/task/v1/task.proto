@@ -1,0 +1,5 @@
+syntax = "proto3";
+
+package rpc.task.v1;
+
+option go_package = "github.com/yosuke7040/grpc-taskapp/backend/interfaces/rpc/task/v1;task_v1";
