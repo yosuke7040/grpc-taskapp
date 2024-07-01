@@ -1,6 +1,6 @@
 import { Button, Divider, Group, List, Text } from "@mantine/core";
 import { FC } from "react";
-import { Task } from "../gen/task/v1/task_pb";
+import { Task } from "../gen/rpc/task/v1/task_pb";
 import { useChangeTask } from "../hooks/UseChangeTask";
 
 type Props = {
