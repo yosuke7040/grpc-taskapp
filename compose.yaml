@@ -1,4 +1,5 @@
-version: "3.8"
+# docker compose v2からversion指定は不要（指定するとWARNが出た）
+# version: "3.8"
 
 services:
   backend:
@@ -49,8 +50,7 @@ services:
       - --character-set-server=utf8mb4
       - --lower_case_table_names=1
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
   # redis
   # redis:
   #   image: redis:6.0-alpine3.18

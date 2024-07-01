@@ -42,10 +42,9 @@ RUN go install github.com/air-verse/air@v1.52.2 \
   && go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest \
   && go install github.com/bufbuild/buf/cmd/buf@latest \
   && go install google.golang.org/protobuf/cmd/protoc-gen-go@latest \
-  && go install connectrpc.com/connect/cmd/protoc-gen-connect-go@latest
-
-# bufのlinterとtask
-RUN go install github.com/yoheimuta/protolint/cmd/protolint@latest \
+  && go install connectrpc.com/connect/cmd/protoc-gen-connect-go@latest \
+  && go install github.com/ktr0731/evans@latest \
+  && go install github.com/yoheimuta/protolint/cmd/protolint@latest \
   && go install github.com/go-task/task/v3/cmd/task@latest \
   && go install github.com/go-delve/delve/cmd/dlv@latest
 

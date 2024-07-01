@@ -92,13 +92,17 @@ func (s *serverMuxEngine) Listen() {
 }
 
 func (s *serverMuxEngine) setupHandlers(qry db.Querier) {
-	s.router.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Hello, World!"))
-	})
+	// s.router.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
+	// 	w.Write([]byte("Hello, World!"))
+	// })
 
 	// path, handler := s.buildUserServerHandler(qry)
 	// s.router.Handle(path, handler)
-	s.router.Handle(user_v1connect.NewUserServiceHandler(s.buildUserServerHandler(qry)))
+
+	// s.router.Handle(user_v1connect.NewUserServiceHandler(s.buildUserServerHandler(qry)))
+
+	path, userHandler := user_v1connect.NewUserServiceHandler(s.buildUserServerHandler(qry))
+	s.router.Handle(path, userHandler)
 }
 
 func (s *serverMuxEngine) buildUserServerHandler(qry db.Querier) *userHandler.Handler {

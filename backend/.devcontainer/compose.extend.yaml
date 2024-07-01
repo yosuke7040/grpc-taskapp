@@ -5,20 +5,23 @@ services:
       target: develop
     ports:
       - 8080:8080
-      - 2345:2345
-    # NOTE:
-    # cached: ホストを信頼し、コンテナ側への反映が遅延することを許容
-    # delegated: コンテナ側を信頼し、ホスト側への反映が遅延することを許容
-    # volumes:
-    #   - ../..:/workspaces:delegated # コンテナに入ってコーディングする場合
+      # - 2345:2345
+      # NOTE:
+      # cached: ホストを信頼し、コンテナ側への反映が遅延することを許容
+      # delegated: コンテナ側を信頼し、ホスト側への反映が遅延することを許容
+      # volumes:
+      #   - ../..:/workspaces:delegated # コンテナに入ってコーディングする場合
     volumes:
       - type: bind
-        source: ./backend
-        target: /workspace
+        # リポジトリのルートディレクトリをマウントしないとgithubの差分がVSCodeで表示されない
+        # ?: でもそうすると全部ルート直下で良いのでは...
+        source: ./
+        # source: ./backend
+        target: /workspace:delegated
     command: sleep infinity
     # Runs app on the same network as the database container, allows "forwardPorts" in devcontainer.json function.
     # network_mode: service:mysql
-    security_opt:
-      - apparmor:unconfined
-    cap_add:
-      - SYS_PTRACE
+    # security_opt:
+    #   - apparmor:unconfined
+    # cap_add:
+    #   - SYS_PTRACE

@@ -6,6 +6,7 @@ import (
 	"connectrpc.com/connect"
 	"github.com/yosuke7040/grpc-taskapp/backend/app"
 	userApp "github.com/yosuke7040/grpc-taskapp/backend/app/user"
+	domainError "github.com/yosuke7040/grpc-taskapp/backend/domain/error"
 	user_v1 "github.com/yosuke7040/grpc-taskapp/backend/interfaces/rpc/user/v1"
 )
 
@@ -28,7 +29,6 @@ func (h *Handler) GetUser(
 	*connect.Response[user_v1.GetUserResponse],
 	error,
 ) {
-	// ? validationってどこでするのが良いんだろうか?domain serviceみたいなところ作る？
 	var input userApp.FindUserUseCaseInput
 	input.ID = arg.Msg.Id
 
@@ -37,10 +37,10 @@ func (h *Handler) GetUser(
 		switch e := err.(type) {
 		case *app.ErrInputValidationFailed:
 			return nil, connect.NewError(connect.CodeInvalidArgument, e)
-		// case *domain.ErrInputValidationFailed:
-		// 	return nil, connect.NewError(connect.CodeInvalidArgument, e)
-		// case *domain.ErrUserNotFound:
-		// 	return nil, connect.NewError(connect.CodeNotFound, e)
+		case *domainError.ErrValidationFailed:
+			return nil, connect.NewError(connect.CodeInvalidArgument, e)
+		case *domainError.ErrNotFound:
+			return nil, connect.NewError(connect.CodeNotFound, e)
 		default:
 			return nil, connect.NewError(connect.CodeInternal, e)
 		}
