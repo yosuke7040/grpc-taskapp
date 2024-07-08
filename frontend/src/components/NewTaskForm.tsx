@@ -20,7 +20,7 @@ export const NewTaskForm: FC = () => {
             autoComplete="off"
             placeholder="New Task"
           />
-          <Button type="submit" loading={createMutation.isLoading}>
+          <Button type="submit" loading={createMutation.isPending}>
             Add
           </Button>
         </Group>

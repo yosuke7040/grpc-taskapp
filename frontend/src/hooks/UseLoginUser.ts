@@ -9,7 +9,7 @@ type FormValue = {
 };
 
 // ログイン処理のカスタムフック
-export const useLoginUser = (onSubmit: (user: LoginResponse) => void) => {
+export const useLoginUser: any = (onSubmit: (user: LoginResponse) => void) => {
   const loginMutation = useMutation(login.useMutation());
   const form = useForm<FormValue>({
     initialValues: {

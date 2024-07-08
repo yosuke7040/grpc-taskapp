@@ -44,7 +44,7 @@ export const LoginRoute: FC<Props> = ({ onSubmit }) => {
             />
           </Group>
           <Group mt="md">
-            <Button type="submit" loading={loginMutation.isLoading}>
+            <Button type="submit" loading={loginMutation.isPending}>
               Login
             </Button>
           </Group>

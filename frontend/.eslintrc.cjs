@@ -1,6 +1,7 @@
-module.exports = {
+/** @type {import("eslint").Linter.Config} */
+const config = {
   root: true,
-  env: { browser: true, es2020: true },
+  parser: "@typescript-eslint/parser",
   extends: [
     "plugin:@typescript-eslint/recommended",
     "plugin:@typescript-eslint/recommended-requiring-type-checking",
@@ -14,15 +15,7 @@ module.exports = {
     tsconfigRootDir: __dirname,
     project: ["./tsconfig.json"],
   },
-  ignorePatterns: ['dist', '.eslintrc.cjs'],
-  parser: '@typescript-eslint/parser',
-  plugins: ['react-refresh'],
   rules: {
-    'react-refresh/only-export-components': [
-      'warn',
-      { allowConstantExport: true },
-    ],
-
     // デフォルト設定の厳格すぎるルールをオフにする
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/explicit-function-return-type": "off",
@@ -59,4 +52,6 @@ module.exports = {
       version: "detect",
     },
   },
-}
+};
+
+module.exports = config;

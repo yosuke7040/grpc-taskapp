@@ -16,7 +16,7 @@ export const TaskCard: FC<Props> = ({ task }) => {
     <List.Item my="md">
       <Group>
         <Text>{task.name}</Text>
-        <Text>{task.updatedAt?.toDate().toLocaleDataString()}</Text>
+        <Text>{task.updatedAt?.toDate().toLocaleDateString()}</Text>
       </Group>
       <Group>
         {task.isCompleted ? (
