@@ -14,10 +14,13 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 
 	"github.com/rs/cors"
+	taskUsecase "github.com/yosuke7040/grpc-taskapp/backend/app/task"
 	userUsecase "github.com/yosuke7040/grpc-taskapp/backend/app/user"
 	"github.com/yosuke7040/grpc-taskapp/backend/infrastructure/persistence/model/db"
 	sqlcRepo "github.com/yosuke7040/grpc-taskapp/backend/infrastructure/persistence/sqlc/repository"
+	"github.com/yosuke7040/grpc-taskapp/backend/interfaces/rpc/task/v1/task_v1connect"
 	"github.com/yosuke7040/grpc-taskapp/backend/interfaces/rpc/user/v1/user_v1connect"
+	taskHandler "github.com/yosuke7040/grpc-taskapp/backend/presentation/task"
 	userHandler "github.com/yosuke7040/grpc-taskapp/backend/presentation/user"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
@@ -92,26 +95,31 @@ func (s *serverMuxEngine) Listen() {
 }
 
 func (s *serverMuxEngine) setupHandlers(qry db.Querier) {
-	// s.router.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
-	// 	w.Write([]byte("Hello, World!"))
-	// })
+	s.router.Handle(user_v1connect.NewUserServiceHandler(s.buildUserServerHandler(qry)))
+	s.router.Handle(task_v1connect.NewTaskServiceHandler(s.buildTaskServerHandler(qry)))
 
-	// path, handler := s.buildUserServerHandler(qry)
-	// s.router.Handle(path, handler)
-
-	// s.router.Handle(user_v1connect.NewUserServiceHandler(s.buildUserServerHandler(qry)))
-
-	path, userHandler := user_v1connect.NewUserServiceHandler(s.buildUserServerHandler(qry))
-	s.router.Handle(path, userHandler)
+	// path, userHandler := user_v1connect.NewUserServiceHandler(s.buildUserServerHandler(qry))
+	// s.router.Handle(path, userHandler)
 }
 
 func (s *serverMuxEngine) buildUserServerHandler(qry db.Querier) *userHandler.Handler {
-	// func (s *serverMuxEngine) buildUserServerHandler(qry db.Querier) (string, http.Handler) {
 	repo := sqlcRepo.NewUserRepository(qry)
-	// srv := service.NewUserService(repo)
 	uc := userUsecase.NewFindUserUseCase(repo)
 	server := userHandler.NewHandler(uc)
 
 	return &server
-	// return user_v1connect.NewUserServiceHandler(&server)
+}
+
+func (s *serverMuxEngine) buildTaskServerHandler(qry db.Querier) *taskHandler.Handler {
+	repo := sqlcRepo.NewTaskRepository(qry)
+	findTaskByIDUseCase := taskUsecase.NewFindTaskByIDUseCase(repo)
+	findTasksByUserIDUseCase := taskUsecase.NewFindTasksByUserIDUseCase(repo)
+	createTaskUseCase := taskUsecase.NewCreateTaskUseCase(repo)
+	server := taskHandler.NewHandler(
+		findTaskByIDUseCase,
+		findTasksByUserIDUseCase,
+		createTaskUseCase,
+	)
+
+	return &server
 }

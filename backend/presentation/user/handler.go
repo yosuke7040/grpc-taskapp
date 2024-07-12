@@ -6,7 +6,7 @@ import (
 	"connectrpc.com/connect"
 	"github.com/yosuke7040/grpc-taskapp/backend/app"
 	userApp "github.com/yosuke7040/grpc-taskapp/backend/app/user"
-	domainError "github.com/yosuke7040/grpc-taskapp/backend/domain/error"
+	domainError "github.com/yosuke7040/grpc-taskapp/backend/domain/model/error"
 	user_v1 "github.com/yosuke7040/grpc-taskapp/backend/interfaces/rpc/user/v1"
 )
 

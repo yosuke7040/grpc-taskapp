@@ -6,11 +6,10 @@ package db
 
 import (
 	"context"
-	"database/sql"
 )
 
 type Querier interface {
-	CreateTask(ctx context.Context, arg CreateTaskParams) (sql.Result, error)
+	CreateTask(ctx context.Context, arg CreateTaskParams) error
 	DeleteTask(ctx context.Context, id string) error
 	FindTaskByID(ctx context.Context, id string) (*Task, error)
 	FindTasksByUserID(ctx context.Context, userID string) ([]*Task, error)

@@ -2,9 +2,8 @@ package repository
 
 import (
 	"context"
-	"time"
 
-	userDomain "github.com/yosuke7040/grpc-taskapp/backend/domain/user"
+	userDomain "github.com/yosuke7040/grpc-taskapp/backend/domain/model/user"
 	"github.com/yosuke7040/grpc-taskapp/backend/infrastructure/persistence/model/db"
 )
 
@@ -22,22 +21,24 @@ func (r *UserRepository) FindUserByID(ctx context.Context, id string) (*userDoma
 		return nil, err
 	}
 
-	var createdAt time.Time
-	if res.CreatedAt.Valid {
-		createdAt = res.CreatedAt.Time
-	}
+	// var createdAt time.Time
+	// if res.CreatedAt.Valid {
+	// 	createdAt = res.CreatedAt.Time
+	// }
 
-	var updatedAt time.Time
-	if res.UpdatedAt.Valid {
-		updatedAt = res.UpdatedAt.Time
-	}
+	// var updatedAt time.Time
+	// if res.UpdatedAt.Valid {
+	// 	updatedAt = res.UpdatedAt.Time
+	// }
 
 	return userDomain.NewUser(
 		res.ID,
 		res.Email,
 		res.Password,
-		createdAt,
-		updatedAt,
+		res.CreatedAt,
+		res.UpdatedAt,
+		// createdAt,
+		// updatedAt,
 	), nil
 }
 
@@ -47,21 +48,21 @@ func (r *UserRepository) FindUserByEmail(ctx context.Context, id string) (*userD
 		return nil, err
 	}
 
-	var createdAt time.Time
-	if res.CreatedAt.Valid {
-		createdAt = res.CreatedAt.Time
-	}
+	// var createdAt time.Time
+	// if res.CreatedAt.Valid {
+	// 	createdAt = res.CreatedAt.Time
+	// }
 
-	var updatedAt time.Time
-	if res.UpdatedAt.Valid {
-		updatedAt = res.UpdatedAt.Time
-	}
+	// var updatedAt time.Time
+	// if res.UpdatedAt.Valid {
+	// 	updatedAt = res.UpdatedAt.Time
+	// }
 
 	return userDomain.NewUser(
 		res.ID,
 		res.Email,
 		res.Password,
-		createdAt,
-		updatedAt,
+		res.CreatedAt,
+		res.UpdatedAt,
 	), nil
 }

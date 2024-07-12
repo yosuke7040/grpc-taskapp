@@ -5,22 +5,22 @@
 package db
 
 import (
-	"database/sql"
+	"time"
 )
 
 type Task struct {
-	ID          string       `json:"id"`
-	UserID      string       `json:"user_id"`
-	Name        string       `json:"name"`
-	IsCompleted bool         `json:"is_completed"`
-	CreatedAt   sql.NullTime `json:"created_at"`
-	UpdatedAt   sql.NullTime `json:"updated_at"`
+	ID          string    `json:"id"`
+	UserID      string    `json:"user_id"`
+	Name        string    `json:"name"`
+	IsCompleted bool      `json:"is_completed"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
 }
 
 type User struct {
-	ID        string       `json:"id"`
-	Email     string       `json:"email"`
-	Password  string       `json:"password"`
-	CreatedAt sql.NullTime `json:"created_at"`
-	UpdatedAt sql.NullTime `json:"updated_at"`
+	ID        string    `json:"id"`
+	Email     string    `json:"email"`
+	Password  string    `json:"password"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }

@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	userDomain "github.com/yosuke7040/grpc-taskapp/backend/domain/user"
+	userDomain "github.com/yosuke7040/grpc-taskapp/backend/domain/model/user"
 )
 
 type (

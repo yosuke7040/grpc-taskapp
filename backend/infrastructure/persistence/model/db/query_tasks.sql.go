@@ -7,32 +7,31 @@ package db
 
 import (
 	"context"
-	"database/sql"
+	"time"
 )
 
-const createTask = `-- name: CreateTask :execresult
-INSERT INTO tasks(id, user_id, name, is_completed, created_at, updated_at)
-VALUES(?, ?, ?, ?, ?, ?)
+const createTask = `-- name: CreateTask :exec
+INSERT INTO tasks(id, user_id, name, is_completed, created_at)
+VALUES(?, ?, ?, ?, ?)
 `
 
 type CreateTaskParams struct {
-	ID          string       `json:"id"`
-	UserID      string       `json:"user_id"`
-	Name        string       `json:"name"`
-	IsCompleted bool         `json:"is_completed"`
-	CreatedAt   sql.NullTime `json:"created_at"`
-	UpdatedAt   sql.NullTime `json:"updated_at"`
+	ID          string    `json:"id"`
+	UserID      string    `json:"user_id"`
+	Name        string    `json:"name"`
+	IsCompleted bool      `json:"is_completed"`
+	CreatedAt   time.Time `json:"created_at"`
 }
 
-func (q *Queries) CreateTask(ctx context.Context, arg CreateTaskParams) (sql.Result, error) {
-	return q.exec(ctx, q.createTaskStmt, createTask,
+func (q *Queries) CreateTask(ctx context.Context, arg CreateTaskParams) error {
+	_, err := q.exec(ctx, q.createTaskStmt, createTask,
 		arg.ID,
 		arg.UserID,
 		arg.Name,
 		arg.IsCompleted,
 		arg.CreatedAt,
-		arg.UpdatedAt,
 	)
+	return err
 }
 
 const deleteTask = `-- name: DeleteTask :exec
@@ -105,23 +104,17 @@ func (q *Queries) FindTasksByUserID(ctx context.Context, userID string) ([]*Task
 
 const updateTask = `-- name: UpdateTask :exec
 UPDATE tasks
-SET name = ?, is_completed = ?, updated_at = ?
+SET name = ?, is_completed = ?
 WHERE id = ?
 `
 
 type UpdateTaskParams struct {
-	Name        string       `json:"name"`
-	IsCompleted bool         `json:"is_completed"`
-	UpdatedAt   sql.NullTime `json:"updated_at"`
-	ID          string       `json:"id"`
+	Name        string `json:"name"`
+	IsCompleted bool   `json:"is_completed"`
+	ID          string `json:"id"`
 }
 
 func (q *Queries) UpdateTask(ctx context.Context, arg UpdateTaskParams) error {
-	_, err := q.exec(ctx, q.updateTaskStmt, updateTask,
-		arg.Name,
-		arg.IsCompleted,
-		arg.UpdatedAt,
-		arg.ID,
-	)
+	_, err := q.exec(ctx, q.updateTaskStmt, updateTask, arg.Name, arg.IsCompleted, arg.ID)
 	return err
 }
