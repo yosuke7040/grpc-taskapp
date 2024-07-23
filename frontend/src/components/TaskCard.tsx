@@ -1,4 +1,4 @@
-import { Button, Divider, Group, List, Text } from "@mantine/core";
+import { Button, Group, List, Text } from "@mantine/core";
 import { FC } from "react";
 import { Task } from "../gen/rpc/task/v1/task_pb";
 import { useChangeTask } from "../hooks/UseChangeTask";

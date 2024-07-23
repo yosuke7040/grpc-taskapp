@@ -11,11 +11,13 @@ export const HomeRoute: FC = () => {
     <>
       <Title order={2}>Tasks</Title>
       <NewTaskForm />
-      <List sx={{ listStyle: "none" }}>
+      {/* <List sx={{ listStyle: "none" }}> */}
+      <List styles={{ root: { listStyle: 'none' } }}>
         {taskQuery.isLoading && <Text>Loading...</Text>}
         {taskQuery.isError && <Text>{taskQuery.error.message}</Text>}
         {!taskQuery.isLoading
           && !taskQuery.isError
+          && taskQuery.data
           && taskQuery.data.tasks.map((task) => (
             <TaskCard key={task.id} task={task} />
           ))}

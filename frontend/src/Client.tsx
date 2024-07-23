@@ -1,5 +1,6 @@
 import { TransportProvider } from "@bufbuild/connect-query";
-import { Interceptor, createConnectTransport } from "@bufbuild/connect-web";
+import { createConnectTransport } from "@bufbuild/connect-web";
+import { Interceptor } from "@bufbuild/connect";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { FC, ReactNode } from "react";
 

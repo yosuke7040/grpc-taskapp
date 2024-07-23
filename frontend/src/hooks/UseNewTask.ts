@@ -33,5 +33,5 @@ export const useNewTask = () => {
     form.reset();
   });
 
-  return { form, createMutation, handleSubmit}
-}
+  return { form, createMutation, handleSubmit };
+};
