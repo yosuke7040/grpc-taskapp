@@ -11,17 +11,20 @@ import (
 	"syscall"
 	"time"
 
+	"connectrpc.com/connect"
 	_ "github.com/go-sql-driver/mysql"
 
 	"github.com/rs/cors"
-	taskUsecase "github.com/yosuke7040/grpc-taskapp/backend/app/task"
-	userUsecase "github.com/yosuke7040/grpc-taskapp/backend/app/user"
+	"github.com/yosuke7040/grpc-taskapp/backend/handler"
+	"github.com/yosuke7040/grpc-taskapp/backend/infrastructure/interceptor"
 	"github.com/yosuke7040/grpc-taskapp/backend/infrastructure/persistence/model/db"
 	sqlcRepo "github.com/yosuke7040/grpc-taskapp/backend/infrastructure/persistence/sqlc/repository"
+	"github.com/yosuke7040/grpc-taskapp/backend/interfaces/rpc/auth/v1/auth_v1connect"
 	"github.com/yosuke7040/grpc-taskapp/backend/interfaces/rpc/task/v1/task_v1connect"
 	"github.com/yosuke7040/grpc-taskapp/backend/interfaces/rpc/user/v1/user_v1connect"
-	taskHandler "github.com/yosuke7040/grpc-taskapp/backend/presentation/task"
-	userHandler "github.com/yosuke7040/grpc-taskapp/backend/presentation/user"
+	"github.com/yosuke7040/grpc-taskapp/backend/usecase"
+	"github.com/yosuke7040/grpc-taskapp/backend/utils/auth"
+	"github.com/yosuke7040/grpc-taskapp/backend/utils/contextkey"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
 )
@@ -95,31 +98,39 @@ func (s *serverMuxEngine) Listen() {
 }
 
 func (s *serverMuxEngine) setupHandlers(qry db.Querier) {
-	s.router.Handle(user_v1connect.NewUserServiceHandler(s.buildUserServerHandler(qry)))
-	s.router.Handle(task_v1connect.NewTaskServiceHandler(s.buildTaskServerHandler(qry)))
+	authInterceptor := connect.WithInterceptors(interceptor.NewAuthInterceptor("github.com/yosuke7040/grpc-taskapp/backend", "/home/vscode/.grpc-taskapp/id_rsa"))
 
-	// path, userHandler := user_v1connect.NewUserServiceHandler(s.buildUserServerHandler(qry))
-	// s.router.Handle(path, userHandler)
+	s.router.Handle(auth_v1connect.NewAuthServiceHandler(s.buildAuthServerHandler(qry)))
+	s.router.Handle(user_v1connect.NewUserServiceHandler(s.buildUserServerHandler(qry)))
+	s.router.Handle(task_v1connect.NewTaskServiceHandler(s.buildTaskServerHandler(qry), authInterceptor))
 }
 
-func (s *serverMuxEngine) buildUserServerHandler(qry db.Querier) *userHandler.Handler {
+func (s *serverMuxEngine) buildAuthServerHandler(qry db.Querier) *handler.AuthHandler {
+	tm, _ := auth.NewTokenManager("github.com/yosuke7040/grpc-taskapp/backend", "/home/vscode/.grpc-taskapp/id_rsa")
+	// if err != nil {
+	// 	return nil, err
+	// }
+
 	repo := sqlcRepo.NewUserRepository(qry)
-	uc := userUsecase.NewFindUserUseCase(repo)
-	server := userHandler.NewHandler(uc)
+	uc := usecase.NewAuthUsecase(repo, tm, (1 * time.Hour))
+	server := handler.NewAuthHandler(uc)
 
 	return &server
 }
 
-func (s *serverMuxEngine) buildTaskServerHandler(qry db.Querier) *taskHandler.Handler {
+func (s *serverMuxEngine) buildUserServerHandler(qry db.Querier) *handler.UserHandler {
+	repo := sqlcRepo.NewUserRepository(qry)
+	uc := usecase.NewUserUsecase(repo)
+	server := handler.NewUserHandler(uc)
+
+	return &server
+}
+
+func (s *serverMuxEngine) buildTaskServerHandler(qry db.Querier) *handler.TaskHandler {
+	cr := contextkey.NewContextReader()
 	repo := sqlcRepo.NewTaskRepository(qry)
-	findTaskByIDUseCase := taskUsecase.NewFindTaskByIDUseCase(repo)
-	findTasksByUserIDUseCase := taskUsecase.NewFindTasksByUserIDUseCase(repo)
-	createTaskUseCase := taskUsecase.NewCreateTaskUseCase(repo)
-	server := taskHandler.NewHandler(
-		findTaskByIDUseCase,
-		findTasksByUserIDUseCase,
-		createTaskUseCase,
-	)
+	uc := usecase.NewTaskUsecase(repo)
+	server := handler.NewTaskHandler(uc, cr)
 
 	return &server
 }
