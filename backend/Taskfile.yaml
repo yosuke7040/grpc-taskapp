@@ -2,8 +2,8 @@ version: '3'
 
 vars:
   MIGRATION_DIR: "./data/schema"
-  # PRIVATE_KEY_PATH: "path/to/private/key"
-  # KEY_DIR: "path/to/key/dir"
+  KEY_DIR: "/home/vscode/.grpc-taskapp"
+  PRIVATE_KEY_PATH: "/home/vscode/.grpc-taskapp/id_rsa"
   DATABASE_URL: "mysql://gogo:gogo@tcp(mysql:3306)/app_db?parseTime=true"
 
 tasks:

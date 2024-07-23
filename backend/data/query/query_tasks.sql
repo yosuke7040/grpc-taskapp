@@ -11,12 +11,12 @@ WHERE user_id = ?
 ORDER BY updated_at DESC;
 
 -- name: CreateTask :exec
-INSERT INTO tasks(id, user_id, name, is_completed, created_at)
-VALUES(?, ?, ?, ?, ?);
+INSERT INTO tasks(id, user_id, name, is_completed, created_at, updated_at)
+VALUES(?, ?, ?, ?, ?, ?);
 
 -- name: UpdateTask :exec
 UPDATE tasks
-SET name = ?, is_completed = ?
+SET name = ?, is_completed = ?, updated_at = ?
 WHERE id = ?;
 
 -- name: DeleteTask :exec
