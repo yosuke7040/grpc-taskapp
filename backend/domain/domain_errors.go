@@ -1,4 +1,4 @@
-package error
+package domain
 
 type ErrValidationFailed struct {
 	Msg string
